@@ -1,5 +1,6 @@
 import sys
 import discord
+import os
 from discord.ext import commands
 from gtts import gTTS
 
@@ -66,4 +67,10 @@ async def say(ctx, *, text=None):
     except OpusNotLoaded as e:
         await ctx.send(f"OpusNotLoaded: \n`{e}`")
 
-bot.run(sys.argv[1])
+token = os.environ.get('BOT_TOKEN')
+if not token:
+    print("Environment variable `BOT_TOKEN` not set")
+    exit(1)
+
+print("Token: {}".format(token))
+bot.run(token)

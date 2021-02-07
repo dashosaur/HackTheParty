@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "da_vinci.py", ""]
+CMD ["python", "da_vinci.py"]
