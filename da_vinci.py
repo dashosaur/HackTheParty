@@ -1,3 +1,4 @@
+import sys
 import discord
 from discord.ext import commands
 from gtts import gTTS
@@ -51,10 +52,10 @@ async def say(ctx, *, text=None):
         return
     
     tts = gTTS(text=text, lang="en")
-    tts.save("text.mp3")
+    tts.save("/tmp/text.mp3")
     
     try:
-        vc.play(discord.FFmpegPCMAudio('text.mp3'), after=lambda e: print(f"Finished playing, error: {e}"))
+        vc.play(discord.FFmpegPCMAudio('/tmp/text.mp3'), after=lambda e: print(f"Finished playing, error: {e}"))
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 1
     
@@ -65,4 +66,4 @@ async def say(ctx, *, text=None):
     except OpusNotLoaded as e:
         await ctx.send(f"OpusNotLoaded: \n`{e}`")
 
-bot.run('ODA3ODU3NDUyNzYyMzk4NzYw.YB-F4g.O736qtzgNPCwn_5r9HxV66hjMvA')
+bot.run(sys.argv[1])
