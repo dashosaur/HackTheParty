@@ -1,76 +1,32 @@
-import sys
-import discord
 import os
+import discord
 from discord.ext import commands
-from gtts import gTTS
+from voice_cog import VoiceCog
 
 bot = commands.Bot(command_prefix='$')
 
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+    bot.add_cog(VoiceCog(bot))
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if member.bot:
+        return
+
+    if after.channel.id == 807845575730659348:
+        print(f"{member.name} joined the bathroom")
+        vc = await after.channel.connect()
+        await voice_client_say("You look cute", vc)
 
 @bot.command()
 async def ping(ctx):
     await ctx.send("pong", tts=True)
-    
-@bot.command()
-async def join(ctx, *, channel: discord.VoiceChannel=None):
-    if not channel:
-        try:
-            channel = ctx.author.voice.channel
-        except AttributeError:
-            raise InvalidVoiceChannel('Specify a channel or join one first.')
-
-    vc = ctx.voice_client
-
-    if vc:
-        if vc.channel.id == channel.id:
-            return
-        try:
-            await vc.move_to(channel)
-        except asyncio.TimeoutError:
-            raise VoiceConnectionError(f'Moving to channel: <{channel}> timed out.')
-    else:
-        try:
-            await channel.connect()
-        except asyncio.TimeoutError:
-            raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
-
-@bot.command()
-async def leave(ctx):
-    await ctx.voice_client.disconnect()
-
-@bot.command()
-async def say(ctx, *, text=None):
-    if not text:
-        await ctx.send("")
-        return
-
-    vc = ctx.voice_client
-    if not vc:
-        await ctx.send("Use $connect to invite me into a voice channel before you ask me to speak.")
-        return
-    
-    tts = gTTS(text=text, lang="en")
-    tts.save("/tmp/text.mp3")
-    
-    try:
-        vc.play(discord.FFmpegPCMAudio('/tmp/text.mp3'), after=lambda e: print(f"Finished playing, error: {e}"))
-        vc.source = discord.PCMVolumeTransformer(vc.source)
-        vc.source.volume = 1
-    
-    except ClientException as e:
-        await ctx.send(f"ClientException:\n`{e}`")
-    except TypeError as e:
-        await ctx.send(f"TypeError:\n`{e}`")
-    except OpusNotLoaded as e:
-        await ctx.send(f"OpusNotLoaded: \n`{e}`")
 
 token = os.environ.get('BOT_TOKEN')
 if not token:
     print("Environment variable `BOT_TOKEN` not set")
     exit(1)
 
-print("Token: {}".format(token))
 bot.run(token)
