@@ -1,7 +1,9 @@
 import sys
 import discord
 from discord.ext import commands
-from gtts import gTTS
+from google.cloud import texttospeech
+from pathlib import Path
+import hashlib
 
 class VoiceCog(commands.Cog):
     def __init__(self, bot):
@@ -52,8 +54,31 @@ class VoiceCog(commands.Cog):
                 raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
 
     def say_text(self, text, vc):
-        temp_file = "/tmp/text.mp3"
-        gTTS(text=text, lang="en").save(temp_file)
-        vc.play(discord.FFmpegPCMAudio(temp_file), after=lambda e: print(f"Finished playing, error: {e}"))
+        use_fancy_voice = True
+
+        # md5 hash the text to get a unique enough filename
+        temp_file_path = f"/tmp/bot_{hashlib.md5(text.encode()).hexdigest()}_{use_fancy_voice}.mp3"
+
+        file = Path(temp_file_path)
+        if not file.is_file():
+            # generate new audio
+            if not use_fancy_voice:
+                gTTS(text=text, lang="en").save(temp_file_path)
+            else:
+                client = texttospeech.TextToSpeechClient()
+                voice = texttospeech.VoiceSelectionParams(
+                    language_code="en-US",
+                    name="en-US-Wavenet-C",
+                    # ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+                )
+                response = client.synthesize_speech(
+                    input=texttospeech.SynthesisInput(text=text),
+                    voice=voice,
+                    audio_config=texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+                )
+                with open(temp_file_path, "wb") as out:
+                    out.write(response.audio_content)
+
+        vc.play(discord.FFmpegPCMAudio(temp_file_path), after=lambda e: print(f"Finished playing, error: {e}"))
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 1
