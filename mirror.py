@@ -132,9 +132,9 @@ compliments = [
     # "Something’s wrong with my eyes because I can’t take them off you.",
 ]
 
-token = os.environ.get('DISCORDPY_MIRROR_TOKEN')
+token = os.environ.get('BOT_MIRROR_TOKEN')
 if not token:
-    print("Environment variable `DISCORDPY_MIRROR_TOKEN` not set")
+    print("Environment variable `BOT_MIRROR_TOKEN` not set")
     exit(1)
 
 bot.run(token)

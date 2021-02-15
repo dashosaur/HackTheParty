@@ -6,4 +6,6 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-
+    environment:
+      - BOT_MIRROR_TOKEN=${BOT_MIRROR_TOKEN}
+      - BOT_DA_VINCI_TOKEN=${BOT_DA_VINCI_TOKEN}

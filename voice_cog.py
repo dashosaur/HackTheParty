@@ -2,6 +2,7 @@ import sys
 import discord
 from discord.ext import commands
 from google.cloud import texttospeech
+from gtts import gTTS
 from pathlib import Path
 import hashlib
 
@@ -54,7 +55,7 @@ class VoiceCog(commands.Cog):
                 raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
 
     def say_text(self, text, vc):
-        use_fancy_voice = True
+        use_fancy_voice = False
 
         # md5 hash the text to get a unique enough filename
         temp_file_path = f"/tmp/bot_{hashlib.md5(text.encode()).hexdigest()}_{use_fancy_voice}.mp3"

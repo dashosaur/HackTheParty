@@ -26,9 +26,9 @@ async def on_voice_state_update(member, before, after):
 async def ping(ctx):
     await ctx.send("pong", tts=True)
 
-token = os.environ.get('BOT_TOKEN')
+token = os.environ.get('BOT_DA_VINCI_TOKEN')
 if not token:
-    print("Environment variable `BOT_TOKEN` not set")
+    print("Environment variable `BOT_DA_VINCI_TOKEN` not set")
     exit(1)
 
 bot.run(token)
