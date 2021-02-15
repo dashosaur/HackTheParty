@@ -53,7 +53,7 @@ compliments = [
     "Hey babe, are you a double? The thought of you always floats inside my head",
     "Hey babe, are you an exception? Let me catch you",
     "Hey cutie, if you were a part of my domain, we could share cookies.",
-    "Hey babe, give me your number... sudo give me your number",
+    "<speak>Hey babe, give me your number... <break time=\"1.5s\"/> sudo give me your number</speak>",
 
 
     # "You are so pretty",

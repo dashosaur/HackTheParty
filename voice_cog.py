@@ -72,7 +72,7 @@ class VoiceCog(commands.Cog):
                     # ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
                 )
                 response = client.synthesize_speech(
-                    input=texttospeech.SynthesisInput(text=text),
+                    input=texttospeech.SynthesisInput(ssml=text) if text.startswith('<') else texttospeech.SynthesisInput(text=text),
                     voice=voice,
                     audio_config=texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
                 )
