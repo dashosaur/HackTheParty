@@ -1,12 +1,22 @@
 version: "3.7"
 
 services:
-  app:
+  davinci_bot:
+    build: .
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - BOT_DA_VINCI_TOKEN=${BOT_DA_VINCI_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    command: python da_vinci.py
+  
+  mirror_bot:
     build: .
     working_dir: /app
     volumes:
       - ./:/app
     environment:
       - BOT_MIRROR_TOKEN=${BOT_MIRROR_TOKEN}
-      - BOT_DA_VINCI_TOKEN=${BOT_DA_VINCI_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    command: python mirror.py

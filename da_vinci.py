@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from voice_cog import VoiceCog
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='d$')
 
 voice_cog = VoiceCog(bot)
 bot.add_cog(voice_cog)
@@ -19,7 +19,7 @@ async def on_voice_state_update(member, before, after):
 
     if after.channel.id == 807845575730659348:
         print(f"{member.name} joined the bathroom")
-        vc = await after.channel.connect()
+        vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text("You look cute", vc)
 
 @bot.command()
