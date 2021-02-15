@@ -54,7 +54,7 @@ class VoiceCog(commands.Cog):
             except asyncio.TimeoutError:
                 raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
 
-    def say_text(self, text, vc):
+    def say_text(self, text, vc, voice_name="en-US-Wavenet-C"):
         use_fancy_voice = True
 
         # md5 hash the text to get a unique enough filename
@@ -69,7 +69,7 @@ class VoiceCog(commands.Cog):
                 client = texttospeech.TextToSpeechClient()
                 voice = texttospeech.VoiceSelectionParams(
                     language_code="en-US",
-                    name="en-US-Wavenet-C",
+                    name=voice_name,
                     # ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
                 )
                 response = client.synthesize_speech(

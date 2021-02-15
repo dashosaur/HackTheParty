@@ -2,6 +2,7 @@ import os
 import discord
 from discord.ext import commands
 from voice_cog import VoiceCog
+from channels import VoiceChannel
 
 bot = commands.Bot(command_prefix='d$')
 
@@ -17,7 +18,7 @@ async def on_voice_state_update(member, before, after):
     if member.bot:
         return
 
-    if after.channel.id == 807845575730659348:
+    if after.channel.id == VoiceChannel.bathroom.value:
         print(f"{member.name} joined the bathroom")
         vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text("You look cute", vc)

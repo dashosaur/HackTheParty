@@ -8,6 +8,8 @@ services:
       - ./:/app
     environment:
       - BOT_DA_VINCI_TOKEN=${BOT_DA_VINCI_TOKEN}
+      - BOT_MIRROR_TOKEN=${BOT_MIRROR_TOKEN}
+      - BOT_ROOF_POOL_TOKEN=${BOT_ROOF_POOL_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     command: python da_vinci.py
   

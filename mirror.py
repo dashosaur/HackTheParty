@@ -5,7 +5,7 @@ from discord.ext import commands
 from voice_cog import VoiceCog
 from channels import VoiceChannel
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='m$')
 
 voice_cog = VoiceCog(bot)
 bot.add_cog(voice_cog)
