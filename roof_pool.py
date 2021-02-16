@@ -36,6 +36,12 @@ async def on_voice_state_update(member, before, after):
 
     if after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
+
+        time.sleep(.5)
+        print("Saying hold the door")
+        vc = await voice_cog.join_channel(after.channel)
+        voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
+
         n00b = get(member.guild.roles, id=Role.n00b.value)
 
         for channel_member in after.channel.members:
@@ -44,11 +50,6 @@ async def on_voice_state_update(member, before, after):
             print(f"Freeing {channel_member.name}")
             await channel_member.remove_roles(n00b)
         print("The n00bs are free!")
-
-        time.sleep(.5)
-        print("Saying hold the door")
-        vc = await voice_cog.join_channel(after.channel)
-        voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
 
         time.sleep(4)
         print("The n00bs are locked out again!")
