@@ -56,12 +56,12 @@ class VoiceCog(commands.Cog):
 
     def say_text(self, text, vc, voice_name="en-US-Wavenet-C"):
         use_fancy_voice = True
+        use_cache = False
 
         # md5 hash the text to get a unique enough filename
         temp_file_path = f"/tmp/bot_{hashlib.md5(text.encode()).hexdigest()}_{use_fancy_voice}.mp3"
 
-        file = Path(temp_file_path)
-        if not file.is_file():
+        if not Path(temp_file_path).is_file() or not use_cache:
             # generate new audio
             if not use_fancy_voice:
                 gTTS(text=text, lang="en").save(temp_file_path)
