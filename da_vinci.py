@@ -1,27 +1,28 @@
 import os
 import discord
 from discord.ext import commands
-from voice_cog import VoiceCog
 from channels import VoiceChannel
 
 bot = commands.Bot(command_prefix='d$')
 
-voice_cog = VoiceCog(bot)
-bot.add_cog(voice_cog)
-
 @bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(bot))
+    print('Da Vinci bot logged in as {0.user}'.format(bot))
 
 @bot.event
-async def on_voice_state_update(member, before, after):
-    if member.bot:
+async def on_message(message):
+    channel = message.channel
+    if channel.id != VoiceChannel.kates_computer.value:
         return
+    
+    if message.content.startswith('login'):
+        await channel.send('Say hello!')
 
-    if after.channel.id == VoiceChannel.bathroom.value:
-        print(f"{member.name} joined the bathroom")
-        vc = await voice_cog.join_channel(after.channel)
-        voice_cog.say_text("You look cute", vc)
+        def check(m):
+            return m.content == 'hello' and m.channel == channel
+
+        msg = await bot.wait_for('message', check=check)
+        await channel.send('Hello {.author}!'.format(msg))
 
 @bot.command()
 async def ping(ctx):
