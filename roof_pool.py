@@ -5,6 +5,7 @@ from discord.utils import get
 from voice_cog import VoiceCog
 from channels import VoiceChannel
 from roles import Role
+import time
 
 bot = commands.Bot(command_prefix='p$')
 
@@ -23,8 +24,8 @@ async def on_ready():
     for vc in guild.voice_channels:
         if vc.id == VoiceChannel.roof_pool.value:
             continue
-        await vc.set_permissions(noob_role, overwrite=overwrite, reason="Roof Pool Bot")
-        print(f'set permission for {vc}')
+        # await vc.set_permissions(noob_role, overwrite=overwrite, reason="Roof Pool Bot")
+        # print(f'set permission for {vc}')
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -35,14 +36,22 @@ async def on_voice_state_update(member, before, after):
 
     if after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
+        n00b = get(member.guild.roles, id=Role.n00b.value)
 
+        for channel_member in after.channel.members:
+            print(f"Freeing {channel_member.name}")
+            await channel_member.remove_roles(n00b)
+        print("The n00bs are free!")
+
+        time.sleep(.5)
+        print("Saying hold the door")
         vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
 
-        await member.add_roles(get(member.guild.roles, id=Role.n00b.value))
-
-    elif before.channel.id == VoiceChannel.roof_pool.value:
-        await member.remove_roles(get(member.guild.roles, id=Role.n00b.value))
+        time.sleep(4.5)
+        print("The n00bs are locked out again!")
+        for member_id in after.channel.voice_states.keys():
+            await member.add_roles(n00b)
 
 token = os.environ.get('BOT_ROOF_POOL_TOKEN')
 if not token:
