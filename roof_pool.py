@@ -45,6 +45,7 @@ async def on_voice_state_update(member, before, after):
             await channel_member.remove_roles(n00b)
         print("The n00bs are free!")
 
+        time.sleep(.5)
         print("Saying hold the door")
         vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")

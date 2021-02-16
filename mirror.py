@@ -24,6 +24,7 @@ async def on_voice_state_update(member, before, after):
     if after.channel.id == VoiceChannel.bathroom.value:
         print(f"{member.name} entered the bathroom")
 
+        time.sleep(.5)
         vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text(random.choice(compliments), vc)
 
