@@ -39,7 +39,7 @@ async def on_voice_state_update(member, before, after):
         n00b = get(member.guild.roles, id=Role.n00b.value)
 
         for channel_member in after.channel.members:
-            if channel_member.bot or channel_member.id == member.id:
+            if channel_member.bot:
                 continue
             print(f"Freeing {channel_member.name}")
             await channel_member.remove_roles(n00b)
