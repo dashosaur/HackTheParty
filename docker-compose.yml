@@ -1,18 +1,15 @@
 version: "3.7"
 
 services:
-  davinci_bot:
+  da_vinci_bot:
     build: .
     working_dir: /app
     volumes:
       - ./:/app
     environment:
       - BOT_DA_VINCI_TOKEN=${BOT_DA_VINCI_TOKEN}
-      - BOT_MIRROR_TOKEN=${BOT_MIRROR_TOKEN}
-      - BOT_ROOF_POOL_TOKEN=${BOT_ROOF_POOL_TOKEN}
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     command: python da_vinci.py
-  
+
   mirror_bot:
     build: .
     working_dir: /app
@@ -22,3 +19,13 @@ services:
       - BOT_MIRROR_TOKEN=${BOT_MIRROR_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     command: python mirror.py
+
+  roof_pool_bot:
+    build: .
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - BOT_ROOF_POOL_TOKEN=${BOT_ROOF_POOL_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    command: python roof_pool.py
