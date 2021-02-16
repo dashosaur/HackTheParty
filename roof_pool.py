@@ -37,7 +37,6 @@ async def on_voice_state_update(member, before, after):
     if after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
 
-        time.sleep(.5)
         print("Saying hold the door")
         vc = await voice_cog.join_channel(after.channel)
         voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
@@ -52,9 +51,11 @@ async def on_voice_state_update(member, before, after):
         print("The n00bs are free!")
 
         time.sleep(4)
-        print("The n00bs are locked out again!")
+        print("The door shuts")
         for member_id in after.channel.voice_states.keys():
             await member.add_roles(n00b)
+
+        voice_cog.say_text("<speak>Oh no, it shut before we could get out! We'll be locked up here until someone finds us again.</speak>", vc, "en-US-Wavenet-E")
 
 token = os.environ.get('BOT_ROOF_POOL_TOKEN')
 if not token:
