@@ -1,6 +1,7 @@
 import os
 import discord
 import random
+import time
 from discord.ext import commands
 from voice_cog import VoiceCog
 from channels import VoiceChannel
