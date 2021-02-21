@@ -19,41 +19,53 @@ async def on_ready():
 async def on_voice_state_update(member, before, after):
     if member.bot:
         return
-    if after.channel is None:
+
+    # ignore voice state changes aside from channel moves (e.g. mute / unmute)
+    if before.channel == after.channel:
         return
 
-    if after.channel.id == VoiceChannel.bathroom.value:
+    print(f"{member.name} moved from {before.channel.name if before.channel else None} to {after.channel.name if after.channel else None}")
+
+    if before.channel and before.channel.id == VoiceChannel.bathroom.value:
+        print(f"{member.name} left the bathroom")
+        # if all real users have left, the bot should leave too
+        if all(map(lambda m: m.bot, before.channel.members)):
+            print(f"The bathroom is empty, leaving")
+            await voice_cog.leave_channel()
+
+    if after.channel and after.channel.id == VoiceChannel.bathroom.value:
         print(f"{member.name} entered the bathroom")
 
         time.sleep(.5)
         vc = await voice_cog.join_channel(after.channel)
-        voice_cog.say_text(random.choice(compliments), vc)
+        text = random.choice(compliments).replace("{name}", member.nick or member.name or "Babe")
+        voice_cog.say_text(text, vc)
 
 compliments = [
-    "You look slick all day",
+    "{name}, you look slick all day",
     "Now I'm trying to save you from yourself but you gotta stop letting your mama dress you, man!",
     "Your only crime is that of curiousity",
     "Yo... you kinda look like a god",
-    "You're elite",
-    "You make my software turn into hardware",
+    "{name}, you're elite",
+    "Hey {name}, you make my software turn into hardware",
     "Is your name Wi-fi? Because I'm really feeling a connection.",
     "What's your interest in me? Academic, purely sexual, or homicidal?",
-    "Hey babe, you had me at Hello World.",
+    "Hey {name}, you had me at Hello World.",
     "You look good in a dress",
     "Hey babe, if you have an empty slot, I have the card to fill it.",
     "Hey babe, your homepage or mine?",
     "Baby, if they made you in C, you would have a pointer to my heart. If they made you in Java, you'd be the object of my desire.",
     "Spandex is a privilege, not a right",
-    "Hey babe, can you be my private variable? I want to be the only one with access to you.",
+    "Hey {name}, can you be my private variable? I want to be the only one with access to you.",
     "The pool on the roof must have a leak because I'm all wet.",
     "Hey babe, I would love to stick my pins into your sockets.",
     "Hey baby, my servers never go down... but I do!",
-    "You are hotter than the bottom of my laptop",
+    "{name}, you are hotter than the bottom of my laptop",
     "Hey baby, want to experience a backdoor Trojan?",
-    "Hey cutie, are you airdropping me something? Because I’m really feeling a connection",
+    "Hey {name}, are you airdropping me something? Because I’m really feeling a connection",
     "Hey baby, can I do a penetration test on your back door?",
-    "Hey babe, are you a double? The thought of you always floats inside my head",
-    "Hey babe, are you an exception? Let me catch you",
+    "Hey {name}, are you a double? The thought of you always floats inside my head",
+    "Hey {name}, are you an exception? Let me catch you",
     "Hey cutie, if you were a part of my domain, we could share cookies.",
     "<speak>Hey babe, give me your number... <break time=\"1.5s\"/> sudo give me your number</speak>",
 

@@ -54,6 +54,12 @@ class VoiceCog(commands.Cog):
             except asyncio.TimeoutError:
                 raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
 
+    async def leave_channel(self, vc=None):
+        if vc is None:
+            vc = next(iter(self.bot.voice_clients), None)
+        if vc is not None:
+            await vc.disconnect()
+
     def say_text(self, text, vc, voice_name="en-US-Wavenet-C"):
         use_fancy_voice = True
         use_cache = False
