@@ -75,7 +75,10 @@ async def execute_story(member, channel):
         print(f"Assigning n00b role to {channel_member.name}")
         await channel_member.add_roles(bot.noob_role)
 
-    voice_cog.say_text("Oh no, the door shut before we could get out! We'll be locked up here until someone finds us again.", vc, "en-US-Wavenet-E")
+    if all(map(lambda m: m.bot, channel.members)):
+        print("Skipping second message because the channel is empty")
+    else:
+        voice_cog.say_text("Oh no, the door shut before we could get out! We'll be locked up here until someone finds us again.", vc, "en-US-Wavenet-E")
 
     bot.is_executing_story = False
 
