@@ -5,7 +5,7 @@ from discord.utils import get
 from voice_cog import VoiceCog
 from channels import VoiceChannel
 from roles import Role
-import time
+import asyncio
 
 intents = discord.Intents.default()
 intents.members = True
@@ -54,7 +54,7 @@ async def execute_story(member, channel):
 
     print("Saying hold the door")
     vc = await voice_cog.join_channel(channel)
-    voice_cog.say_text("<speak>Hey! <break time=\"0.5s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
+    voice_cog.say_text("Hey! hold the door!", vc, "en-US-Wavenet-A")
 
     n00b = get(member.guild.roles, id=Role.n00b.value)
 
@@ -66,7 +66,7 @@ async def execute_story(member, channel):
 
     print("The n00bs are free!")
 
-    time.sleep(4)
+    await asyncio.sleep(4)
     print("The door shuts")
 
     channel = member.guild.get_channel(channel.id) # refetch the channel
