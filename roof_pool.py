@@ -7,7 +7,11 @@ from channels import VoiceChannel
 from roles import Role
 import time
 
-bot = commands.Bot(command_prefix='p$')
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix='p$', intents=intents)
+bot.is_executing_story = False
 
 voice_cog = VoiceCog(bot)
 bot.add_cog(voice_cog)
@@ -34,28 +38,46 @@ async def on_voice_state_update(member, before, after):
     if after.channel is None:
         return
 
+    # ignore voice state changes aside from channel moves (e.g. mute / unmute)
+    if before.channel == after.channel:
+        return
+
     if after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
+        await execute_story(member, after.channel)
 
-        print("Saying hold the door")
-        vc = await voice_cog.join_channel(after.channel)
-        voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
+async def execute_story(member, channel):
+    if bot.is_executing_story:
+        print("Ignoring request to execute since a story is already in progress")
+        return
+    bot.is_executing_story = True
 
-        n00b = get(member.guild.roles, id=Role.n00b.value)
+    print("Saying hold the door")
+    vc = await voice_cog.join_channel(channel)
+    voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
 
-        for channel_member in after.channel.members:
-            if channel_member.bot:
-                continue
-            print(f"Freeing {channel_member.name}")
-            await channel_member.remove_roles(n00b)
-        print("The n00bs are free!")
+    n00b = get(member.guild.roles, id=Role.n00b.value)
 
-        time.sleep(4)
-        print("The door shuts")
-        for member_id in after.channel.voice_states.keys():
-            await member.add_roles(n00b)
+    for member_id in channel.voice_states.keys():
+        channel_member = member.guild.get_member(member_id)
+        if channel_member.bot:
+            continue
+        print(f"Freeing {channel_member.name}")
+        await channel_member.remove_roles(n00b)
+    print("The n00bs are free!")
 
-        voice_cog.say_text("<speak>Oh no, it shut before we could get out! We'll be locked up here until someone finds us again.</speak>", vc, "en-US-Wavenet-E")
+    time.sleep(4)
+    print("The door shuts")
+    for member_id in channel.voice_states.keys():
+        channel_member = member.guild.get_member(member_id)
+        if channel_member.bot:
+            continue
+        print(f"Assigning n00b role to {channel_member.name}")
+        await channel_member.add_roles(n00b)
+
+    voice_cog.say_text("<speak>Oh no, it shut before we could get out! We'll be locked up here until someone finds us again.</speak>", vc, "en-US-Wavenet-E")
+
+    bot.is_executing_story = False
 
 token = os.environ.get('BOT_ROOF_POOL_TOKEN')
 if not token:
