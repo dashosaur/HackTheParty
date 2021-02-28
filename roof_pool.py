@@ -40,10 +40,10 @@ async def on_voice_state_update(member, before, after):
     if before.channel == after.channel:
         return
 
-    if after.channel.id == VoiceChannel.roof_pool.value:
+    if after.channel is not None and after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
         await execute_story(member, after.channel)
-    elif before.channel.id == VoiceChannel.roof_pool.value:
+    elif before.channel is not None and before.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} left the roof")
         await member.remove_roles(bot.noob_role)
 
@@ -56,7 +56,7 @@ async def execute_story(member, channel):
 
     vc = await voice_cog.join_channel(channel)
     await asyncio.sleep(0.5)
-    voice_cog.say_text("<speak>Hey! <break time=\"0.5s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
+    voice_cog.say_text("<speak>Hey! <break time=\"0.5s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A", use_cache=True)
 
     for channel_member in channel.members:
         if channel_member.bot:
