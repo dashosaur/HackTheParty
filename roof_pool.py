@@ -55,7 +55,8 @@ async def execute_story(member, channel):
     print("Executing story")
 
     vc = await voice_cog.join_channel(channel)
-    voice_cog.say_text("Hey! Hold the door!", vc, "en-US-Wavenet-A")
+    await asyncio.sleep(0.5)
+    voice_cog.say_text("<speak>Hey! <break time=\"0.5s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
 
     for channel_member in channel.members:
         if channel_member.bot:
