@@ -22,20 +22,18 @@ async def on_ready():
     roof_pool = bot.get_channel(VoiceChannel.roof_pool.value)
 
     guild = bot.get_guild(802727441646092288)
-    noob_role = get(guild.roles, id=Role.n00b.value)
+    bot.noob_role = get(guild.roles, id=Role.n00b.value)
     overwrite = discord.PermissionOverwrite()
     overwrite.connect = False
     for vc in guild.voice_channels:
         if vc.id == VoiceChannel.roof_pool.value:
             continue
-        # await vc.set_permissions(noob_role, overwrite=overwrite, reason="Roof Pool Bot")
+        # await vc.set_permissions(bot.noob_role, overwrite=overwrite, reason="Roof Pool Bot")
         # print(f'set permission for {vc}')
 
 @bot.event
 async def on_voice_state_update(member, before, after):
     if member.bot:
-        return
-    if after.channel is None:
         return
 
     # ignore voice state changes aside from channel moves (e.g. mute / unmute)
@@ -45,38 +43,38 @@ async def on_voice_state_update(member, before, after):
     if after.channel.id == VoiceChannel.roof_pool.value:
         print(f"{member.name} entered the roof")
         await execute_story(member, after.channel)
+    elif before.channel.id == VoiceChannel.roof_pool.value:
+        print(f"{member.name} left the roof")
+        await member.remove_roles(bot.noob_role)
 
 async def execute_story(member, channel):
     if bot.is_executing_story:
         print("Ignoring request to execute since a story is already in progress")
         return
     bot.is_executing_story = True
+    print("Executing story")
 
-    print("Saying hold the door")
     vc = await voice_cog.join_channel(channel)
-    voice_cog.say_text("Hey! hold the door!", vc, "en-US-Wavenet-A")
-
-    n00b = get(member.guild.roles, id=Role.n00b.value)
+    voice_cog.say_text("Hey! Hold the door!", vc, "en-US-Wavenet-A")
 
     for channel_member in channel.members:
         if channel_member.bot:
             continue
         print(f"Freeing {channel_member.name}")
-        await channel_member.remove_roles(n00b)
+        await channel_member.remove_roles(bot.noob_role)
 
     print("The n00bs are free!")
 
     await asyncio.sleep(4)
     print("The door shuts")
 
-    channel = member.guild.get_channel(channel.id) # refetch the channel
     for channel_member in channel.members:
         if channel_member.bot:
             continue
         print(f"Assigning n00b role to {channel_member.name}")
-        await channel_member.add_roles(n00b)
+        await channel_member.add_roles(bot.noob_role)
 
-    voice_cog.say_text("<speak>Oh no, it shut before we could get out! We'll be locked up here until someone finds us again.</speak>", vc, "en-US-Wavenet-E")
+    voice_cog.say_text("Oh no, the door shut before we could get out! We'll be locked up here until someone finds us again.", vc, "en-US-Wavenet-E")
 
     bot.is_executing_story = False
 
