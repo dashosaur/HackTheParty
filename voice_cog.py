@@ -5,6 +5,7 @@ from google.cloud import texttospeech
 from gtts import gTTS
 from pathlib import Path
 import hashlib
+import time
 
 class VoiceCog(commands.Cog):
     def __init__(self, bot):
@@ -60,12 +61,11 @@ class VoiceCog(commands.Cog):
         if vc is not None:
             await vc.disconnect()
 
-    def say_text(self, text, vc, voice_name="en-US-Wavenet-C"):
+    def say_text(self, text, vc, voice_name="en-US-Wavenet-C", use_cache=False):
         use_fancy_voice = True
-        use_cache = False
 
         # md5 hash the text to get a unique enough filename
-        temp_file_path = f"/tmp/bot_{hashlib.md5(text.encode()).hexdigest()}_{use_fancy_voice}.mp3"
+        temp_file_path = f"/tmp/bot_{hashlib.md5(text.encode()).hexdigest()}_{voice_name}.mp3"
 
         if not Path(temp_file_path).is_file() or not use_cache:
             # generate new audio
@@ -89,3 +89,11 @@ class VoiceCog(commands.Cog):
         vc.play(discord.FFmpegPCMAudio(temp_file_path), after=lambda e: print(f"Finished playing, error: {e}"))
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 1
+        vc._player.join()
+
+    def play_mp3(self, file_path, vc):
+        print(f"Playing {file_path}")
+        vc.play(discord.FFmpegPCMAudio(file_path), after=lambda e: print(f"Finished playing, error: {e}"))
+        vc.source = discord.PCMVolumeTransformer(vc.source)
+        vc.source.volume = 1
+        vc._player.join()

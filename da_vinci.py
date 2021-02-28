@@ -12,17 +12,22 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     channel = message.channel
+    author = message.author
     if channel.id != VoiceChannel.kates_computer.value:
         return
-    
-    if message.content.startswith('login'):
-        await channel.send('Say hello!')
+    if author.bot:
+        return
 
-        def check(m):
-            return m.content == 'hello' and m.channel == channel
-
-        msg = await bot.wait_for('message', check=check)
-        await channel.send('Hello {.author}!'.format(msg))
+    if '--forgot-password' in message.content:
+        await channel.send('Please answer the following security question:')
+        await channel.send('What is Dash\'s favorite animal?')
+        msg = await bot.wait_for('message', check=lambda m: m.author == author and m.channel == channel)
+        if msg.content == 'sloth':
+            await channel.send('successfully logged in as Dash')
+        else:
+            await channel.send('login failed')
+    elif message.content.startswith('login'):
+        await channel.send('usage: login [-P <password>] [--forgot-password]')
 
 @bot.command()
 async def ping(ctx):

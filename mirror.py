@@ -44,7 +44,7 @@ async def on_voice_state_update(member, before, after):
 compliments = [
     "{name}, you look slick all day",
     "Now I'm trying to save you from yourself but you gotta stop letting your mama dress you, man!",
-    "Your only crime is that of curiousity",
+    "Your only crime is that of curiosity",
     "Yo... you kinda look like a god",
     "{name}, you're elite",
     "Hey {name}, you make my software turn into hardware",
