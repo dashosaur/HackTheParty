@@ -54,12 +54,11 @@ async def execute_story(member, channel):
 
     print("Saying hold the door")
     vc = await voice_cog.join_channel(channel)
-    voice_cog.say_text("<speak>Hey! <break time=\"1s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
+    voice_cog.say_text("<speak>Hey! <break time=\"0.5s\" /> hold the door!</speak>", vc, "en-US-Wavenet-A")
 
     n00b = get(member.guild.roles, id=Role.n00b.value)
 
-    for member_id in channel.voice_states.keys():
-        channel_member = member.guild.get_member(member_id)
+    for channel_member in channel.members:
         if channel_member.bot:
             continue
         print(f"Freeing {channel_member.name}")
@@ -71,8 +70,7 @@ async def execute_story(member, channel):
     print("The door shuts")
 
     channel = member.guild.get_channel(channel.id) # refetch the channel
-    for member_id in channel.voice_states.keys():
-        channel_member = member.guild.get_member(member_id)
+    for channel_member in channel.members:
         if channel_member.bot:
             continue
         print(f"Assigning n00b role to {channel_member.name}")
