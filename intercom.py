@@ -15,6 +15,7 @@ async def on_ready():
     print('Intercom bot logged in as {0.user}'.format(bot))
 
 @bot.command()
+@commands.has_role('devs')
 async def broadcast(ctx, *, text=None):
     if not text:
         await ctx.send("You have to tell me what to broadcast.")
@@ -30,7 +31,10 @@ async def broadcast(ctx, *, text=None):
         vc = await voice_cog.join_channel(c)
         print(f'saying {text}')
         voice_cog.play_mp3('intercom-in.mp3', vc)
-        voice_cog.say_text(text, vc, use_cache=True)
+        if text is 'htp':
+            voice_cog.play_mp3('htp.mp3', vc)
+        else:
+            voice_cog.say_text(text, vc, use_cache=True)
         voice_cog.play_mp3('intercom-out.mp3', vc)
         await vc.disconnect()
 
