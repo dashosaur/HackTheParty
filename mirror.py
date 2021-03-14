@@ -27,14 +27,16 @@ async def on_voice_state_update(member, before, after):
 
     print(f"{member.name} moved from {before.channel.name if before.channel else None} to {after.channel.name if after.channel else None}")
 
-    if before.channel and before.channel.id == VoiceChannel.bathroom.value:
+    channel_id = VoiceChannel.school_bathroom.value if len(sys.argv) > 1 else VoiceChannel.cyberdelia_bathroom.value
+
+    if before.channel and before.channel.id == channel_id:
         print(f"{member.name} left the bathroom")
         # if all real users have left, the bot should leave too
         if all(map(lambda m: m.bot, before.channel.members)):
             print(f"The bathroom is empty, leaving")
             await voice_cog.leave_channel()
 
-    if after.channel and after.channel.id == VoiceChannel.bathroom.value:
+    if after.channel and after.channel.id == channel_id:
         print(f"{member.name} entered the bathroom")
 
         time.sleep(.5)
