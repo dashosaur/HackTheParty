@@ -1,10 +1,12 @@
-import os
-import discord
-from discord.ext import commands
 from channels import VoiceChannel
-import re
-import random
+from discord.ext import commands
+from hack_points import award_hack_points
 import asyncio
+import discord
+import os
+import random
+import re
+import uuid
 
 intents = discord.Intents.default()
 intents.members = True
@@ -61,6 +63,11 @@ class SecurityQuestionModel:
         self.color = list[3]
         self.activity = list[4]
 
+async def award_da_vinci_hack_points(hacker_snowflake, victim_snowflake):
+    namespace = uuid.UUID('{f45d8434-9670-48bd-afc7-6fb2c78ceea3}')
+    award_uuid = uuid.uuid5(namespace, f"{hacker_snowflake}.{victim_snowflake}")
+    await award_hack_points(hacker_snowflake, 'Password Recovery', 1, award_uuid, 'da_vinci')
+
 @bot.event
 async def on_message(message):
     channel = message.channel
@@ -114,6 +121,7 @@ async def on_message(message):
         await channel.send(f'{author.name} typed: {redacted}')
         if sanitize(msg.content) == a:
             await channel.send(f'successfully logged in as {model.name}')
+            await award_da_vinci_hack_points(author.member_id, model.member_id)
             msg_desktop = await channel.send(embed=discord.Embed(title=f'{model.name.capitalize()}\'s Desktop', description='There\'s not much here.. just a game to play. You will be logged out in 10s.', url='https://www.goodoldtetris.com'));
             await asyncio.sleep(10)
             await msg_desktop.edit(content=f'{model.name} logged out due to inactivity', embed=None)
