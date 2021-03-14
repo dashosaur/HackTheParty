@@ -133,6 +133,7 @@ async def on_message(message):
 
     if '$purge' == message.content:
         await channel.purge()
+        await channel.send('this computer belongs to kate, but is shared with all her friends. no one is logged in right now.')
     elif '--register' in message.content:
         await greet_member_with_questions(author)
     elif message.content.startswith('login'):
