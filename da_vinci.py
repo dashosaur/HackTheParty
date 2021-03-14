@@ -83,7 +83,7 @@ async def on_message(message):
         messages = await bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
 
         def validate(model):
-            if model.member_id is author.id:
+            if int(model.member_id) == author.id:
                 return False
             member = guild.get_member(int(model.member_id))
             if member is None:
