@@ -60,7 +60,8 @@ class SecurityQuestionModel:
 
     def name(self, guild):
         m = guild.get_member(int(self.member_id))
-        return m.nick or m.name
+        name = m.nick or m.name
+        return name.split(' ')[0]
 
 async def award_da_vinci_hack_points(hacker_snowflake, victim_snowflake):
     namespace = uuid.UUID('{f45d8434-9670-48bd-afc7-6fb2c78ceea3}')
@@ -82,7 +83,6 @@ async def on_message(message):
         messages = await bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
 
         def validate(model):
-            # TODO uncomment
             if model.member_id is author.id:
                 return False
             member = guild.get_member(int(model.member_id))
