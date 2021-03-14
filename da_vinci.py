@@ -26,6 +26,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+    #TODO test me
     await greet_member_with_questions(member)
 
 async def greet_member_with_questions(member):
@@ -43,8 +44,11 @@ async def greet_member_with_questions(member):
     await member.send('Thanks! Enjoy the party!')
 
     print(f'member id: {member.id}, name: {name}, animal: {animal}, color: {color}, activity: {activity}')
-    log_channel = bot.get_channel(820392621259096145)
-    await log_channel.send(f'{member.id},{name},{animal},{color},{activity}')
+    computer_log = bot.get_channel(VoiceChannel.kates_computer_log.value)
+    await computer_log.send(f'{member.id},{name},{animal},{color},{activity}')
+
+    party_log = bot.get_channel(VoiceChannel.party_log.value)
+    await party_log.send(f'{member.name} joined and got sent questions')
 
 class SecurityQuestionModel:
     def __init__(self, comma_string):
@@ -65,6 +69,7 @@ async def award_da_vinci_hack_points(hacker_snowflake, victim_snowflake):
 
 @bot.event
 async def on_message(message):
+    party_log = await bot.get_channel(VoiceChannel.party_log.value)
     channel = message.channel
     author = message.author
     guild = bot.get_guild(802727441646092288)
@@ -74,7 +79,7 @@ async def on_message(message):
         return
 
     async def security_question_models():
-        messages = await bot.get_channel(820392621259096145).history(limit=200).flatten()
+        messages = await bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
 
         def validate(model):
             # TODO uncomment
@@ -101,6 +106,7 @@ async def on_message(message):
 
     async def question_flow(model, q_index=random.randint(0, 3)):
         name = model.name(guild)
+        await party_log.send(f'{author.name} attempted to login as {name}')
         if q_index == 0:
             q = f'what is {name}\'s favorite animal?'
             a = model.animal
@@ -117,6 +123,7 @@ async def on_message(message):
         await channel.send(f'{author.nick or author.name} typed: {redacted}')
         if sanitize(msg.content) == a:
             await channel.send(f'successfully logged in as {name}')
+            await party_log.send(f'{author.name} successfully logged in as {name}')
             await award_da_vinci_hack_points(author.id, model.member_id)
             msg_desktop = await channel.send(embed=discord.Embed(title=f'{name.capitalize()}\'s Desktop', description='There\'s not much here.. just a game to play. You will be logged out in 10s.', url='https://www.goodoldtetris.com'));
             await asyncio.sleep(10)

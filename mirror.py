@@ -44,6 +44,7 @@ async def on_voice_state_update(member, before, after):
         compliments = clean_compliments if len(sys.argv) > 1 else dirty_compliments
         text = random.choice(compliments).replace("{name}", member.nick or member.name or "Babe")
         voice_cog.say_text(text, vc)
+        await party_log.send(f'Mirror to {member.name}: {text}')
 
 clean_compliments = [
     "{name}, you look slick all day",

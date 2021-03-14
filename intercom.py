@@ -22,6 +22,9 @@ async def broadcast(ctx, *, text=None):
         return
 
     print(f'broadcasting {text}')
+    party_log = await bot.get_channel(VoiceChannel.party_log.value)
+    await party_log.send(f'{ctx.author.name} triggered a broadcast of {text}')
+
     guild = bot.get_guild(802727441646092288)
     for c in guild.voice_channels:
         if not c.voice_states:
