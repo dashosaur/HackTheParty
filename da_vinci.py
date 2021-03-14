@@ -83,13 +83,13 @@ async def on_message(message):
 
         def validate(model):
             # TODO uncomment
-            # if model.member_id is author.id:
-            #     return False
+            if model.member_id is author.id:
+                return False
             member = guild.get_member(int(model.member_id))
             if member is None:
                 return False
-            # if member.voice is None:
-            #     return False
+            if member.voice is None:
+                return False
             return True
 
         models = list(map(lambda m: SecurityQuestionModel(m), messages))
