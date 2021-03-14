@@ -121,7 +121,7 @@ async def on_message(message):
         await channel.send(f'{author.name} typed: {redacted}')
         if sanitize(msg.content) == a:
             await channel.send(f'successfully logged in as {model.name}')
-            await award_da_vinci_hack_points(author.member_id, model.member_id)
+            await award_da_vinci_hack_points(author.id, model.member_id)
             msg_desktop = await channel.send(embed=discord.Embed(title=f'{model.name.capitalize()}\'s Desktop', description='There\'s not much here.. just a game to play. You will be logged out in 10s.', url='https://www.goodoldtetris.com'));
             await asyncio.sleep(10)
             await msg_desktop.edit(content=f'{model.name} logged out due to inactivity', embed=None)
