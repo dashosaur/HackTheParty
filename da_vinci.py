@@ -69,7 +69,7 @@ async def award_da_vinci_hack_points(hacker_snowflake, victim_snowflake):
 
 @bot.event
 async def on_message(message):
-    party_log = await bot.get_channel(VoiceChannel.party_log.value)
+    party_log = bot.get_channel(VoiceChannel.party_log.value)
     channel = message.channel
     author = message.author
     guild = bot.get_guild(802727441646092288)
@@ -79,7 +79,7 @@ async def on_message(message):
         return
 
     async def security_question_models():
-        messages = await bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
+        messages = bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
 
         def validate(model):
             # TODO uncomment

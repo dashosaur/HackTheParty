@@ -56,7 +56,7 @@ async def execute_story(member, channel):
         return
     bot.is_executing_story = True
     print("Executing story")
-    party_log = await bot.get_channel(VoiceChannel.party_log.value)
+    party_log = bot.get_channel(VoiceChannel.party_log.value)
 
     vc = await voice_cog.join_channel(channel)
     await asyncio.sleep(0.5)
