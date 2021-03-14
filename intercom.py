@@ -15,7 +15,7 @@ async def on_ready():
     print('Intercom bot logged in as {0.user}'.format(bot))
 
 @bot.command()
-@commands.has_role('devs')
+@commands.has_role('Party Hacker ☢️')
 async def broadcast(ctx, *, text=None):
     if not text:
         await ctx.send("You have to tell me what to broadcast.")
