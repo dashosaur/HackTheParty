@@ -2,6 +2,7 @@ import os
 import discord
 import random
 import time
+import sys
 from discord.ext import commands
 from voice_cog import VoiceCog
 from channels import VoiceChannel
@@ -38,7 +39,8 @@ async def on_voice_state_update(member, before, after):
 
         time.sleep(.5)
         vc = await voice_cog.join_channel(after.channel)
-        text = random.choice(dirty_compliments).replace("{name}", member.nick or member.name or "Babe")
+        compliments = clean_compliments if len(sys.argv) > 1 else dirty_compliments
+        text = random.choice(compliments).replace("{name}", member.nick or member.name or "Babe")
         voice_cog.say_text(text, vc)
 
 clean_compliments = [
@@ -73,9 +75,10 @@ dirty_compliments = [
     "<speak>Hey babe, give me your number... <break time=\"1.5s\"/> sudo give me your number</speak>",
 ]
 
-token = os.environ.get('BOT_MIRROR_TOKEN')
+token_name = 'BOT_CLEAN_MIRROR_TOKEN' if len(sys.argv) > 1 else 'BOT_MIRROR_TOKEN'
+token = os.environ.get(token_name)
 if not token:
-    print("Environment variable `BOT_MIRROR_TOKEN` not set")
+    print(f'Environment variable {token_name} not set')
     exit(1)
 
 bot.run(token)
