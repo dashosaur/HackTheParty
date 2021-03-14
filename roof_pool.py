@@ -35,7 +35,7 @@ async def on_ready():
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    if member.bot or member.has_role(bot.npc_role):
+    if member.bot or bot.npc_role in member.roles:
         return
 
     # ignore voice state changes aside from channel moves (e.g. mute / unmute)
@@ -64,7 +64,7 @@ async def execute_story(member, channel):
 
     await party_log.send(f'{member.name} entered the roof, freeing the n00bs (count: {len(channel.members) - 2})')
     for channel_member in channel.members:
-        if channel_member.bot or channel_member.has_role(bot.npc_role):
+        if channel_member.bot or bot.npc_role in channel_member.roles:
             continue
         print(f"Freeing {channel_member.name}")
         await channel_member.remove_roles(bot.noob_role)
@@ -74,14 +74,14 @@ async def execute_story(member, channel):
     await asyncio.sleep(4)
     print("The door shuts")
 
-    await party_log.send(f'Trapping the n00bs (count: {len(channel.members) - 2})')
+    await party_log.send(f'trapping the n00bs (count: {len(channel.members) - 2})')
     for channel_member in channel.members:
-        if channel_member.bot or channel_member.has_role(bot.npc_role):
+        if channel_member.bot or bot.npc_role in channel_member.roles:
             continue
         print(f"Assigning n00b role to {channel_member.name}")
         await channel_member.add_roles(bot.noob_role)
 
-    if all(map(lambda m: m.bot or m.has_role(bot.npc_role), channel.members)):
+    if all(map(lambda m: m.bot or bot.npc_role in m.roles, channel.members)):
         print("Skipping second message because the channel is empty")
     else:
         voice_cog.say_text("Oh no, the door shut before we could get out! We'll be locked up here until someone finds us again.", vc, "en-US-Wavenet-E")

@@ -43,9 +43,9 @@ async def greet_member_with_questions(member):
     activity = sanitize((await bot.wait_for('message', check=check)).content)
     await member.send('Thanks! Enjoy the party!')
 
-    print(f'member id: {member.id}, name: {name}, animal: {animal}, color: {color}, activity: {activity}')
+    print(f'member id: {member.id}, animal: {animal}, color: {color}, activity: {activity}')
     computer_log = bot.get_channel(VoiceChannel.kates_computer_log.value)
-    await computer_log.send(f'{member.id},{name},{animal},{color},{activity}')
+    await computer_log.send(f'{member.id},{animal},{color},{activity}')
 
     party_log = bot.get_channel(VoiceChannel.party_log.value)
     await party_log.send(f'{member.name} joined and got sent questions')
@@ -79,7 +79,7 @@ async def on_message(message):
         return
 
     async def security_question_models():
-        messages = bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
+        messages = await bot.get_channel(VoiceChannel.kates_computer_log.value).history(limit=200).flatten()
 
         def validate(model):
             # TODO uncomment
