@@ -34,8 +34,6 @@ async def greet_member_with_questions(member):
         return m.author == member and isinstance(m.channel, discord.channel.DMChannel)
 
     await member.send('Welcome to Dusty and Bryan\'s Birthday Party! I\'m going to ask you a few questions you can answer if you want to play a little game tonight. (Please answer with simple, succint answers; I\'m a bot from the 90\'s and not very smart.)')
-    await member.send('What name do you go by with the folks here tonight?')
-    name = sanitize_key((await bot.wait_for('message', check=check)).content)
     await member.send('What is your favorite animal?')
     animal = sanitize((await bot.wait_for('message', check=check)).content)
     await member.send('What color underwear are you wearing?')
@@ -52,10 +50,13 @@ class SecurityQuestionModel:
     def __init__(self, comma_string):
         list = comma_string.content.split(',')
         self.member_id = list[0]
-        self.name = list[1]
-        self.animal = list[2]
-        self.color = list[3]
-        self.activity = list[4]
+        self.animal = list[1]
+        self.color = list[2]
+        self.activity = list[3]
+
+    def name(self, guild):
+        m = guild.get_member(int(self.member_id))
+        return m.nick or m.name
 
 async def award_da_vinci_hack_points(hacker_snowflake, victim_snowflake):
     namespace = uuid.UUID('{f45d8434-9670-48bd-afc7-6fb2c78ceea3}')
@@ -93,32 +94,33 @@ async def on_message(message):
     async def print_usage():
         await channel.send('usage: login <username> (--password <password> | --forgot-password)')
         models = await security_question_models()
-        await channel.send(f'users: {", ".join(map(lambda m: m.name, models))}')
+        await channel.send(f'users: {", ".join(map(lambda m: m.name(guild), models))}')
 
     async def print_failed():
         await channel.send('login failed')
 
     async def question_flow(model, q_index=random.randint(0, 3)):
+        name = model.name(guild)
         if q_index == 0:
-            q = f'what is {model.name}\'s favorite animal?'
+            q = f'what is {name}\'s favorite animal?'
             a = model.animal
         elif q_index == 1:
-            q = f'what color underwear is {model.name} wearing?'
+            q = f'what color underwear is {name} wearing?'
             a = model.color
         else:
-            q = f'what activity has kept {model.name} sane during the pandemic?'
+            q = f'what activity has kept {name} sane during the pandemic?'
             a = model.activity
         await channel.send(f'{author.mention}, answer the following security question: {q}')
         msg = await bot.wait_for('message', check=lambda m: m.author == author and m.channel == channel)
         await msg.delete()
         redacted = '•' * len(msg.content)
-        await channel.send(f'{author.name} typed: {redacted}')
+        await channel.send(f'{author.nick or author.name} typed: {redacted}')
         if sanitize(msg.content) == a:
-            await channel.send(f'successfully logged in as {model.name}')
+            await channel.send(f'successfully logged in as {name}')
             await award_da_vinci_hack_points(author.id, model.member_id)
-            msg_desktop = await channel.send(embed=discord.Embed(title=f'{model.name.capitalize()}\'s Desktop', description='There\'s not much here.. just a game to play. You will be logged out in 10s.', url='https://www.goodoldtetris.com'));
+            msg_desktop = await channel.send(embed=discord.Embed(title=f'{name.capitalize()}\'s Desktop', description='There\'s not much here.. just a game to play. You will be logged out in 10s.', url='https://www.goodoldtetris.com'));
             await asyncio.sleep(10)
-            await msg_desktop.edit(content=f'{model.name} logged out due to inactivity', embed=None)
+            await msg_desktop.edit(content=f'{name} logged out due to inactivity', embed=None)
         else:
             await print_failed()
 
@@ -133,7 +135,7 @@ async def on_message(message):
             # random.choice(await security_question_models())
             username = message.content.split(' ')[1]
             models = await security_question_models()
-            m = next((m for m in models if m.name == username), None)
+            m = next((m for m in models if m.name(guild) == username), None)
             if m:
                 await question_flow(m)
             else:
