@@ -29,13 +29,16 @@ async def broadcast(ctx, *, text=None):
             continue
         print(f'joining {c.name}')
         vc = await voice_cog.join_channel(c)
-        print(f'saying {text}')
-        voice_cog.play_mp3('intercom-in.mp3', vc)
-        if text is 'htp':
+        if text == 'htp':
+            print(f'playing {text}x3')
+            voice_cog.play_mp3('htp.mp3', vc)
+            voice_cog.play_mp3('htp.mp3', vc)
             voice_cog.play_mp3('htp.mp3', vc)
         else:
+            print(f'saying {text}')
+            voice_cog.play_mp3('intercom-in.mp3', vc)
             voice_cog.say_text(text, vc, use_cache=True)
-        voice_cog.play_mp3('intercom-out.mp3', vc)
+            voice_cog.play_mp3('intercom-out.mp3', vc)
         await vc.disconnect()
 
 token = os.environ.get('BOT_INTERCOM_TOKEN')
