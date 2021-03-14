@@ -41,7 +41,7 @@ async def greet_member_with_questions(member):
     color = sanitize((await bot.wait_for('message', check=check)).content)
     await member.send('What activity has helped you most during the pandemic?')
     activity = sanitize((await bot.wait_for('message', check=check)).content)
-    await member.send('Thanks! Enjoy the party!')
+    await member.send('Noted. Now go back to the party: https://discord.gg/UH3TQwhuJ2')
 
     print(f'member id: {member.id}, animal: {animal}, color: {color}, activity: {activity}')
     computer_log = bot.get_channel(VoiceChannel.kates_computer_log.value)
