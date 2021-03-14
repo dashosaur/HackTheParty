@@ -24,12 +24,6 @@ def sanitize_key(str):
 async def on_ready():
     print('Da Vinci bot logged in as {0.user}'.format(bot))
 
-    messages = await bot.get_channel(VoiceChannel.kates_computer.value).history(limit=200).flatten()
-    print(f'deleting {len(messages)}')
-    for m in messages:
-        print(f'deleting {m.content}')
-        await m.delete()
-
 @bot.event
 async def on_member_join(member):
     await greet_member_with_questions(member)
@@ -128,7 +122,9 @@ async def on_message(message):
         else:
             await print_failed()
 
-    if '--register' in message.content:
+    if '$purge' == message.content:
+        await channel.purge()
+    elif '--register' in message.content:
         await greet_member_with_questions(author)
     elif message.content.startswith('login'):
         if '--password' in message.content:
